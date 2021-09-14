@@ -72,20 +72,16 @@ public class SudokuTest
 
     @Test
     public void testSolve() {
-        int [][] testGrid = testGrid_1;
-
-        int [][] expectedGrid = expectedGrid_1;
-
         SudokuSolver solver = new SudokuSolver();
-        solver.setGrid(testGrid);
 
-        boolean result = solver.solve();
-        int[][] resultGrid = solver.getGrid();
+        // 1st test
+        solver.setGrid(testGrid_1);
+        assertTrue("solve function should return true. (test1)", solver.solve());
+        assertEquals(expectedGrid_1, solver.getGrid());
 
-        printGrid(resultGrid);
-
-        assertTrue("solve function should return true.", result);
-
-        assertEquals(expectedGrid, resultGrid);
+        // 2nd test
+        solver.setGrid(testGrid_2);
+        assertTrue("solve function should return true. (test2)", solver.solve());
+        assertEquals(expectedGrid_2, solver.getGrid());
     }
 }

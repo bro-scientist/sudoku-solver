@@ -24,7 +24,7 @@ public class SudokuUtility
 
         for (int i = startY; i < startY + 3; i++) {
             for (int j = startX; j < startX + 3; j++) {
-                if (grid[startY][startX] == number) return true;
+                if (grid[i][j] == number) return true;
             }
         }
         return false;
@@ -43,6 +43,6 @@ public class SudokuUtility
             }
             System.out.println(" |");
         }
-        System.out.print(" -------------------");
+        System.out.println(" -------------------");
     }
 }

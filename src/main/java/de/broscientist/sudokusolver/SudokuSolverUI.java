@@ -1,15 +1,23 @@
 package de.broscientist.sudokusolver;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class SudokuSolverUI extends JFrame implements ActionListener
+
+public class SudokuSolverUI extends MouseAdapter implements ActionListener
 {
+    private static final int GRID_SIZE = SudokuUtility.GRID_SIZE;
     private static final int SIZE = 8;
+    private static final int WINDOW_WIDTH_RATIO = 104;
+    private static final int WINDOW_HEIGHT_RATIO = 106;
+    private static final int BORDER_RATIO = 6;
+    private static final int SQUARE_RATIO = 10;
 
     private static final String WINDOW_TITLE = "Sudoku Solver";
     private static final String IMAGE_PATH = "sudoku.png";
@@ -22,8 +30,11 @@ public class SudokuSolverUI extends JFrame implements ActionListener
     private static final Color INPUT_NUMBER_COLOR = Color.BLACK;
     private static final Color SOLVED_NUMBER_COLOR = Color.YELLOW;
 
-    private JPanel[][] gridPanels;
-    private JLabel[][] gridLabels;
+
+    private final JFrame frame;
+
+    private final JPanel[][] gridPanels;
+    private final JLabel[][] gridLabels;
     private int [][] inputNumbers;
     private int [][] outputNumbers = {
             {0,7,2, 0,0,9, 0,0,0},
@@ -43,26 +54,27 @@ public class SudokuSolverUI extends JFrame implements ActionListener
     private boolean running;
 
     public SudokuSolverUI() {
-        this.setTitle(WINDOW_TITLE);
-        this.setIconImage(new ImageIcon(IMAGE_PATH).getImage());
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(104*SIZE, 106*SIZE);
-        this.setResizable(true);
-        this.getContentPane().setBackground(BACKGROUND_COLOR);
-        this.setLayout(null);
+        this.frame = new JFrame();
 
-        this.gridPanels = new JPanel[9][9];
-        this.gridLabels = new JLabel[9][9];
+        this.frame.setTitle(WINDOW_TITLE);
+        this.frame.setIconImage(new ImageIcon(IMAGE_PATH).getImage());
+        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.frame.setSize(WINDOW_WIDTH_RATIO*SIZE, WINDOW_HEIGHT_RATIO*SIZE);
+        this.frame.setResizable(true);
+        this.frame.getContentPane().setBackground(BACKGROUND_COLOR);
+        this.frame.setLayout(null);
 
-        for (int y = 0; y < 9; y++) {
-            for (int x = 0; x < 9; x++) {
+        this.gridPanels = new JPanel[GRID_SIZE][GRID_SIZE];
+        this.gridLabels = new JLabel[GRID_SIZE][GRID_SIZE];
+
+        for (int y = 0; y < GRID_SIZE; y++) {
+            for (int x = 0; x < GRID_SIZE; x++) {
                 JPanel panel = new JPanel();
                 this.gridPanels[y][x] = panel;
-                panel.setBounds(6*SIZE + 10*SIZE*x, 6*SIZE + 10*SIZE*y, 9*SIZE, 9*SIZE);
-                Color color = ((x / 3) + (y / 3)) % 2 == 0 ? FIELD_COLOR_1 : FIELD_COLOR_2;
-                panel.setBackground(color);
-
-                this.add(panel);
+                panel.setBounds((BORDER_RATIO + SQUARE_RATIO*x)*SIZE, (BORDER_RATIO + (SQUARE_RATIO)*y)*SIZE, SQUARE_RATIO*SIZE, SQUARE_RATIO*SIZE);
+                panel.setBackground(((x/3)+(y/3))%2 == 0 ? FIELD_COLOR_1 : FIELD_COLOR_2);
+                panel.setBorder(LineBorder.createBlackLineBorder());
+                this.frame.add(panel);
 
                 JLabel label = new JLabel(null, null, JLabel.CENTER);
                 this.gridLabels[y][x] =  label;
@@ -75,8 +87,8 @@ public class SudokuSolverUI extends JFrame implements ActionListener
     }
 
     public void userInput() {
-        for (int y = 0; y < 9; y++) {
-            for (int x = 0; x < 9; x++) {
+        for (int y = 0; y < GRID_SIZE; y++) {
+            for (int x = 0; x < GRID_SIZE; x++) {
                 JLabel label = gridLabels[y][x];
                 int number = outputNumbers[y][x];
 
@@ -89,21 +101,16 @@ public class SudokuSolverUI extends JFrame implements ActionListener
         panel.setBounds(770, 770, 70, 70);
         panel.setBackground(Color.BLUE);
 
-        this.getRootPane().addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                System.out.println(e.getX() + "," + e.getY());
-            }
-        });
+        this.frame.getRootPane().addMouseListener(this);
 
         submitButton.addActionListener(this);
         panel.add(submitButton);
 
-        this.add(panel);
+        this.frame.add(panel);
 
         // panel.setBorder(new BevelBorder(BevelBorder.RAISED));
 
-        this.setVisible(true);
+        this.frame.setVisible(true);
         this.running = true;
         while (this.running){
         }
@@ -113,11 +120,26 @@ public class SudokuSolverUI extends JFrame implements ActionListener
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == submitButton) {
             System.out.println("poopie");
-            this.dispose();
-            this.running = false;
+            this.frame.dispose();
         }
-        if (e.getSource().equals(getCursor())) {
+        if (e.getSource().equals(frame.getCursor())) {
             System.out.println("CURZZZZZZZZZZZZZZZZOOOOOOOOOOORRRRRR");
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        int mouseX = e.getX();
+        int mouseY = e.getY();
+        int borderSize = BORDER_RATIO*SIZE;
+        if (borderSize < mouseX && mouseX < borderSize + GRID_SIZE*SQUARE_RATIO*SIZE
+        && borderSize < mouseY && mouseY < borderSize + GRID_SIZE*SQUARE_RATIO*SIZE) {
+            int row = (e.getY()/SIZE - BORDER_RATIO) / SQUARE_RATIO;
+            int col = (e.getX()/SIZE - BORDER_RATIO) / SQUARE_RATIO;
+            System.out.println(col + "" + row);
+        }
+        else {
+            System.out.println("naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahhhh.");
         }
     }
 }

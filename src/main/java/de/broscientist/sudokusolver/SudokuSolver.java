@@ -4,7 +4,7 @@ import static de.broscientist.sudokusolver.SudokuUtility.isValidPlacement;
 
 public class SudokuSolver
 {
-    private static final int GRID_SIZE = 9;
+    private static final int GRID_SIZE = SudokuUtility.GRID_SIZE;
     private int[][] grid;
 
     public void setGrid(int[][] grid) {

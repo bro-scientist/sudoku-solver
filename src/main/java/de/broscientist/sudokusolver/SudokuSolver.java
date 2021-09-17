@@ -1,10 +1,10 @@
 package de.broscientist.sudokusolver;
 
 import static de.broscientist.sudokusolver.SudokuUtility.isValidPlacement;
+import static de.broscientist.sudokusolver.SudokuUtility.GRID_SIZE;
 
 public class SudokuSolver
 {
-    private static final int GRID_SIZE = SudokuUtility.GRID_SIZE;
     private int[][] grid;
 
     public void setGrid(int[][] grid) {

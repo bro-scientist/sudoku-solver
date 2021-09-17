@@ -1,7 +1,6 @@
 package de.broscientist.sudokusolver;
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -9,10 +8,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import static de.broscientist.sudokusolver.SudokuUtility.GRID_SIZE;
+
 
 public class SudokuSolverUI extends MouseAdapter implements ActionListener
 {
-    private static final int GRID_SIZE = SudokuUtility.GRID_SIZE;
     private static final int SIZE = 8;
     private static final int WINDOW_WIDTH_RATIO = 104;
     private static final int WINDOW_HEIGHT_RATIO = 106;

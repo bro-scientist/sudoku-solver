@@ -2,11 +2,7 @@ package de.broscientist.sudokusolver;
 
 import org.junit.jupiter.api.Test;
 
-import javax.swing.*;
 
-import java.awt.*;
-
-import static de.broscientist.sudokusolver.SudokuUtility.printGrid;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

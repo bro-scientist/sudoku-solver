@@ -66,6 +66,8 @@ public class SudokuSolverUI extends MouseAdapter implements ActionListener
 
         this.gridPanels = new JPanel[GRID_SIZE][GRID_SIZE];
         this.gridLabels = new JLabel[GRID_SIZE][GRID_SIZE];
+        this.inputNumbers = new int[GRID_SIZE][GRID_SIZE];
+        // this.outputNumbers = new int[GRID_SIZE][GRID_SIZE];
 
         for (int y = 0; y < GRID_SIZE; y++) {
             for (int x = 0; x < GRID_SIZE; x++) {
@@ -86,16 +88,22 @@ public class SudokuSolverUI extends MouseAdapter implements ActionListener
         }
     }
 
-    public void userInput() {
+    private void refreshLabels() {
         for (int y = 0; y < GRID_SIZE; y++) {
             for (int x = 0; x < GRID_SIZE; x++) {
                 JLabel label = gridLabels[y][x];
-                int number = outputNumbers[y][x];
+                int number = inputNumbers[y][x];
 
-                if(number == 0) label.setForeground(SOLVED_NUMBER_COLOR);
-                label.setText(Integer.toString(number));
+                if(number != 0) {
+                    // TODO: SOLVING label.setForeground(SOLVED_NUMBER_COLOR);
+                    label.setText(Integer.toString(number));
+                }
             }
         }
+    }
+
+    public void userInput() {
+        this.refreshLabels();
 
         JPanel panel = new JPanel();
         panel.setBounds(770, 770, 70, 70);
@@ -107,8 +115,6 @@ public class SudokuSolverUI extends MouseAdapter implements ActionListener
         panel.add(submitButton);
 
         this.frame.add(panel);
-
-        // panel.setBorder(new BevelBorder(BevelBorder.RAISED));
 
         this.frame.setVisible(true);
         this.running = true;
@@ -136,7 +142,10 @@ public class SudokuSolverUI extends MouseAdapter implements ActionListener
         && borderSize < mouseY && mouseY < borderSize + GRID_SIZE*SQUARE_RATIO*SIZE) {
             int row = (e.getY()/SIZE - BORDER_RATIO) / SQUARE_RATIO;
             int col = (e.getX()/SIZE - BORDER_RATIO) / SQUARE_RATIO;
-            System.out.println(col + "" + row);
+            System.out.println("x"+col+"y"+row);
+            inputNumbers[row][col] = Integer.parseInt(JOptionPane.showInputDialog("enter number"));
+            System.out.println(inputNumbers[row][col]);
+            this.refreshLabels();
         }
         else {
             System.out.println("naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahhhh.");

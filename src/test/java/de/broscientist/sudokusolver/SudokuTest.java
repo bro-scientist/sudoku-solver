@@ -71,13 +71,13 @@ public class SudokuTest
         SudokuSolver solver = new SudokuSolver();
 
         // 1st test
-        solver.setGrid(testGrid_1);
+        solver.setNumbers(testGrid_1);
         assertTrue("solve function should return true. (test1)", solver.solve());
-        assertEquals(expectedGrid_1, solver.getGrid());
+        assertEquals(expectedGrid_1, solver.getNumbers());
 
         // 2nd test
-        solver.setGrid(testGrid_2);
+        solver.setNumbers(testGrid_2);
         assertTrue("solve function should return true. (test2)", solver.solve());
-        assertEquals(expectedGrid_2, solver.getGrid());
+        assertEquals(expectedGrid_2, solver.getNumbers());
     }
 }

@@ -2,11 +2,7 @@ package de.broscientist.sudokusolver;
 
 import org.junit.jupiter.api.Test;
 
-import javax.swing.*;
 
-import java.awt.*;
-
-import static de.broscientist.sudokusolver.SudokuUtility.printGrid;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -72,20 +68,16 @@ public class SudokuTest
 
     @Test
     public void testSolve() {
-        int [][] testGrid = testGrid_1;
-
-        int [][] expectedGrid = expectedGrid_1;
-
         SudokuSolver solver = new SudokuSolver();
-        solver.setGrid(testGrid);
 
-        boolean result = solver.solve();
-        int[][] resultGrid = solver.getGrid();
+        // 1st test
+        solver.setNumbers(testGrid_1);
+        assertTrue("solve function should return true. (test1)", solver.solve());
+        assertEquals(expectedGrid_1, solver.getNumbers());
 
-        printGrid(resultGrid);
-
-        assertTrue("solve function should return true.", result);
-
-        assertEquals(expectedGrid, resultGrid);
+        // 2nd test
+        solver.setNumbers(testGrid_2);
+        assertTrue("solve function should return true. (test2)", solver.solve());
+        assertEquals(expectedGrid_2, solver.getNumbers());
     }
 }

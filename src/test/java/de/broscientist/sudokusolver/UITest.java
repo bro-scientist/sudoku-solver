@@ -8,5 +8,8 @@ public class UITest
     public void testAppearance() {
         SudokuSolverUI ui = new SudokuSolverUI();
         ui.userInput();
+
+        while (true){
+        }
     }
 }

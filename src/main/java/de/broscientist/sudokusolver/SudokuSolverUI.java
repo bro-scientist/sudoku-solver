@@ -13,8 +13,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
-import static de.broscientist.sudokusolver.SudokuUtility.isValidPlacement;
+import static de.broscientist.sudokusolver.SudokuUtility.GRID_ROOT;
 import static de.broscientist.sudokusolver.SudokuUtility.GRID_SIZE;
+import static de.broscientist.sudokusolver.SudokuUtility.isValidPlacement;
 
 
 public class SudokuSolverUI extends MouseAdapter implements ActionListener
@@ -25,11 +26,13 @@ public class SudokuSolverUI extends MouseAdapter implements ActionListener
     private enum UIState {INPUT, SOLVED, ERROR};
     private UIState state;
 
-    private static final int SCALE = 9;
+    private static final int SCALE = 8;
     private static final int OUTER_RATIO = 6;
+    private static final int OUTER_GAP = OUTER_RATIO*SCALE;
     private static final int SQUARE_RATIO = 10;
-    private static final int WINDOW_WIDTH_RATIO = 2*OUTER_RATIO+GRID_SIZE*SQUARE_RATIO+2;
-    private static final int WINDOW_HEIGHT_RATIO = WINDOW_WIDTH_RATIO+4;
+    private static final int SQUARE_SIDE = SQUARE_RATIO*SCALE;
+    private static final int SUDOKU_SIDE = SQUARE_SIDE*GRID_SIZE;
+    private static final int WINDOW_SIDE = (2*OUTER_RATIO+SQUARE_RATIO*GRID_SIZE)*SCALE;
 
     private static final String WINDOW_TITLE = "Sudoku Solver";
     private static final String SOLVE_BTN_TEXT = "SOLVE PUZZLE";
@@ -40,11 +43,10 @@ public class SudokuSolverUI extends MouseAdapter implements ActionListener
 
     private static final Font NUMBER_FONT = new Font("Trebuchet MS", Font.PLAIN,6*SCALE);
 
-    private static final Color BACKGROUND_COLOR = new Color(0xA75D5D);
     private static final Color FIELD_COLOR_1 = new Color(0x808080);
     private static final Color FIELD_COLOR_2 = Color.LIGHT_GRAY;
     private static final Color SELECTED_FIELD_COLOR = Color.YELLOW;
-    private static final Color INPUT_NUMBER_COLOR = Color.BLACK;
+    private static final Color INPUT_NUMBER_COLOR = Color.BLUE;
     private static final Color SOLVED_NUMBER_COLOR = Color.YELLOW;
 
     private static final Border BORDER = new LineBorder(Color.BLACK);
@@ -64,25 +66,22 @@ public class SudokuSolverUI extends MouseAdapter implements ActionListener
         // initialize frame
         this.frame = new JFrame(WINDOW_TITLE);
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.frame.setSize(WINDOW_WIDTH_RATIO*SCALE, WINDOW_HEIGHT_RATIO*SCALE);
+        this.frame.setSize(WINDOW_SIDE+16, WINDOW_SIDE+39); // TODO: find out why
         this.frame.setResizable(false);
         this.frame.setIconImage(new ImageIcon(ICON_PATH).getImage());
 
         JLayeredPane contentPane = new JLayeredPane();
         this.frame.setContentPane(contentPane);
         this.sudokuContainer = new JPanel(new GridLayout(GRID_SIZE, GRID_SIZE));
-        this.sudokuContainer.setBounds(OUTER_RATIO*SCALE, OUTER_RATIO*SCALE, SQUARE_RATIO*GRID_SIZE*SCALE, SQUARE_RATIO*GRID_SIZE*SCALE);
-        this.sudokuContainer.setVisible(true);
+        this.sudokuContainer.setBounds(OUTER_GAP, OUTER_GAP, SUDOKU_SIDE, SUDOKU_SIDE);
         contentPane.add(sudokuContainer, JLayeredPane.PALETTE_LAYER);
 
         try {
             this.background = new JLabel(new ImageIcon(ImageIO.read(new File(BACKGROUND_PATH))));
+            this.background.setBounds(0, 0, WINDOW_SIDE, WINDOW_SIDE);
+            contentPane.add(background, JLayeredPane.DEFAULT_LAYER);
         } catch (IOException ioe) {
-            this.background = new JLabel();
         }
-
-        this.background.setBounds(0, 0, WINDOW_WIDTH_RATIO*SCALE, WINDOW_HEIGHT_RATIO*SCALE);
-        contentPane.add(background, JLayeredPane.DEFAULT_LAYER);
 
         // initialize sudoku grid
         this.gridPanels = new JPanel[GRID_SIZE][GRID_SIZE];
@@ -93,28 +92,23 @@ public class SudokuSolverUI extends MouseAdapter implements ActionListener
             for (int x = 0; x < GRID_SIZE; x++) {
                 JPanel panel = new JPanel();
                 this.gridPanels[y][x] = panel;
-                panel.setBounds((OUTER_RATIO+SQUARE_RATIO*x)*SCALE, (OUTER_RATIO+SQUARE_RATIO*y)*SCALE, SQUARE_RATIO*SCALE, SQUARE_RATIO*SCALE);
-                panel.setBackground(((x/3)+(y/3))%2 == 0 ? FIELD_COLOR_1 : FIELD_COLOR_2);
+                panel.setBackground(((x/GRID_ROOT)+(y/GRID_ROOT))%2 == 0 ? FIELD_COLOR_1 : FIELD_COLOR_2);
                 panel.setBorder(BORDER);
                 this.sudokuContainer.add(panel);
 
                 JLabel label = new JLabel(null, null, JLabel.CENTER);
                 this.gridLabels[y][x] =  label;
-                label.setForeground(INPUT_NUMBER_COLOR);
                 label.setFont(NUMBER_FONT);
-                label.setVisible(true);
                 panel.add(label);
             }
         }
 
         // initialize buttons and add action listeners
         this.submitButton = new JButton();
-        this.submitButton.setBounds((OUTER_RATIO+SQUARE_RATIO*3)*SCALE, (OUTER_RATIO+SQUARE_RATIO*GRID_SIZE)*SCALE, SQUARE_RATIO*3*SCALE, 30);
-
-        // this.frame.getRootPane().addMouseListener(this);
-        this.sudokuContainer.addMouseListener(this);
+        this.submitButton.setBounds(OUTER_GAP+SQUARE_SIDE*3, OUTER_GAP+SUDOKU_SIDE, SQUARE_SIDE*3, SCALE*5);
         this.submitButton.addActionListener(this);
         contentPane.add(submitButton, JLayeredPane.MODAL_LAYER);
+        this.sudokuContainer.addMouseListener(this);
 
         // show frame
         this.frame.setVisible(true);
@@ -189,8 +183,8 @@ public class SudokuSolverUI extends MouseAdapter implements ActionListener
             case SOLVED:
                 return;
             case INPUT:
-                int row = event.getY()/(SCALE*SQUARE_RATIO);
-                int col = event.getX()/(SCALE*SQUARE_RATIO);
+                int row = event.getY()/(SQUARE_SIDE);
+                int col = event.getX()/(SQUARE_SIDE);
                 Color before = this.gridPanels[row][col].getBackground();
                 this.gridPanels[row][col].setBackground(SELECTED_FIELD_COLOR);
                 this.refreshLabels();

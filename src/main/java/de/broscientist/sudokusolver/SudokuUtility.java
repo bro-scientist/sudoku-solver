@@ -2,7 +2,8 @@ package de.broscientist.sudokusolver;
 
 public class SudokuUtility
 {
-    public static final int GRID_SIZE = 9;
+    public static final int GRID_ROOT = 3;
+    public static final int GRID_SIZE = GRID_ROOT*GRID_ROOT;
 
     public static boolean rowContains(int[][] grid, int row, int number) {
         for (int i = 0; i < GRID_SIZE; i++) {

@@ -1,2 +1,2 @@
 # sudoku-solver
-## can solve sudokus (soon hopefully)
+## an app where you can input unsolved sudokus and solve them
